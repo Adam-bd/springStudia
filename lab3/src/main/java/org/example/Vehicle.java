@@ -63,7 +63,11 @@ public abstract class Vehicle {
         String str = " is available.";
         if(rented) str = " isn't available.";
 
-        return "ID " + id + ": " + brand + " " + model + " from " + year + ". The renting price is " + price + " PLN. This " + getType().toLowerCase() + str;
+        return "ID " + id + ": " + brand + " " + model + " from " + year + ". The renting price is " + price + " PLN per day. This " + getType().toLowerCase() + str;
+    }
+
+    public String toStringVehicleAccountDetails(){
+        return "ID is " + id + ": " + brand + " " + model + " from " + year + ". You are paying: " + price + " PLN per day for this " + getType().toLowerCase() + ".";
     }
 
     public String getBrand() {

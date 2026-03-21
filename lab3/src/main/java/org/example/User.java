@@ -44,6 +44,12 @@ public class User {
         return "User: " + getLogin() + str;
     }
 
+    public String toStringUserAccountDetails(){
+        String string = "have";
+        if(getRentedVehicleId() == null) { string = "haven't"; }
+        return "You " + string + " rented a vehicle which ";
+    }
+
     public User cloneUser(){
         return new User(this);
     }

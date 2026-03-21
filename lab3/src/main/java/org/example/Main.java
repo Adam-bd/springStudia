@@ -37,7 +37,7 @@ public class Main {
 
     public static void runUserMenu(Scanner scanner, IVehicleRepositoryImpl vehicleRepository, UserRepository userRepository, User user) {
         int input = 0;
-        while(input != 4) {
+        while(input != 5) {
             System.out.print("""
                     \n-----------Options------------\s
                     If you wish to browse the car rental catalog press (1)\s
@@ -97,8 +97,14 @@ public class Main {
                     System.out.println("You haven't rented out a vehicle.");
                 }
 
+            // Account details (what car the user rented)
             } else if(input == 4) {
-                System.out.println(user.toString() + vehicleRepository.getVehicle(user.getRentedVehicleId()));
+                if(user.getRentedVehicleId() != null) {
+                    System.out.println(user.toStringUserAccountDetails() + vehicleRepository.getVehicle(user.getRentedVehicleId()).toStringVehicleAccountDetails());
+                } else {
+                    System.out.println(user.toStringUserAccountDetails());
+                }
+
             } else if (input <= 0 || input > 5) {
                 System.out.println("You entered an invalid number.");
             }
