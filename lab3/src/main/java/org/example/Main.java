@@ -10,21 +10,46 @@ public class Main {
         Authentication authentication = new Authentication(userRepository);
         Scanner scanner = new Scanner(System.in);
 
-        // Logging in
         User user = null;
-        while(user == null) {
-            System.out.print("Enter login: ");
-            String login = scanner.nextLine();
-            System.out.print("Enter password: ");
-            String password = scanner.nextLine();
 
-            user = authentication.authenticate(login, password); //authenticating the login
-            if(user == null) {
-                System.out.println("Invalid login or password. Try again. \n");
+        while(user == null) {
+            System.out.println("""
+                    Do you want to log in? (y/n)\s
+                    If you do not have an account press (r) to register.
+                    """);
+            String option = scanner.nextLine();
+
+            if (option.equalsIgnoreCase("y")) {
+                // Logging in
+                while (user == null) {
+                    System.out.print("Enter login: ");
+                    String login = scanner.nextLine();
+                    System.out.print("Enter password: ");
+                    String password = scanner.nextLine();
+
+                    user = authentication.authenticate(login, password); //authenticating the login
+                    if (user == null) {
+                        System.out.println("Invalid login or password. Try again. \n");
+                    }
+                }
+                System.out.println("\n Hello, " + user.getLogin() + ". You have been successfully logged in.");
+            } else if (option.equalsIgnoreCase("n")) {
+                return;
+            } else if (option.equalsIgnoreCase("r")) {
+                System.out.print("Enter a login: ");
+                String newUserLogin = scanner.nextLine();
+                System.out.print("Enter a password: ");
+                String newUserPassword = scanner.nextLine();
+
+                User newUser = new User(newUserLogin, Authentication.hashPassword(newUserPassword), Role.USER, null);
+                if (userRepository.addUser(newUser)) {
+                    System.out.println("Account created successfully.");
+                    user = newUser;
+                } else {
+                    System.out.println("This login is already taken!");
+                }
             }
         }
-
-        System.out.println("\n Hello, " + user.getLogin() + ". You have been successfully logged in.");
 
         if(user.getRole() == Role.USER) {
             runUserMenu(scanner, vehicleRepository, userRepository, user);
@@ -115,14 +140,15 @@ public class Main {
 
     public static void runAdminMenu(Scanner scanner, IVehicleRepositoryImpl vehicleRepository, UserRepository userRepository) {
         int input = 0;
-        while(input != 5){
+        while(input != 6){
             System.out.print("""
                     \n----------Options-------------\s
                     To add a new vehicle press (1)\s
                     To remove a vehicle press (2)\s
                     To browse all vehicles press (3)\s
                     To browse all users and their vehicles press (4)\s
-                    To log out press (5)
+                    To delete a user press (5)\s
+                    To log out press (6)
                     """);
             System.out.println("------------------------------\n");
 
@@ -200,7 +226,17 @@ public class Main {
                 }
                 System.out.println("------------------------------------------\n");
 
-            } else if(input <= 0 || input > 5) {
+            // Deleting a user
+            } else if(input == 5) {
+                System.out.println("Enter the login of the user you want to delete.");
+                String userToBeDeletedLogin = scanner.next();
+                if(userRepository.deleteUser(userToBeDeletedLogin)) {
+                    System.out.println("User has been deleted successfully.");
+                } else {
+                    System.out.println("Invalid login or user is renting a vehicle!");
+                }
+
+            } else if(input <= 0 || input > 6) {
                 System.out.println("You entered an invalid number.");
             }
         }

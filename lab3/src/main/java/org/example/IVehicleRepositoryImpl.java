@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IVehicleRepositoryImpl implements IVehicleRepository{
-    List<Vehicle> vehicles = new ArrayList<>();
+    private List<Vehicle> vehicles = new ArrayList<>();
 
     public IVehicleRepositoryImpl() {
         load();
@@ -44,7 +44,6 @@ public class IVehicleRepositoryImpl implements IVehicleRepository{
         return copiedVehicles;
     }
 
-    @Override
     public void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("vehicles.csv"));){
             for(Vehicle v : vehicles){
@@ -56,7 +55,6 @@ public class IVehicleRepositoryImpl implements IVehicleRepository{
         }
     }
 
-    @Override
     public void load() {
         try (BufferedReader br = new BufferedReader(new FileReader("vehicles.csv"));){
             String line;

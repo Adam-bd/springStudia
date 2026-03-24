@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository implements IUserRepository{
-    List<User> users = new ArrayList<>();
+    private List<User> users = new ArrayList<>();
 
     public UserRepository() {
         load();
@@ -46,6 +46,33 @@ public class UserRepository implements IUserRepository{
     }
 
     @Override
+    public boolean addUser(User user) {
+        for(User u : users){
+            if(u.getLogin().equals(user.getLogin())) {
+                return false; // Login already exists
+            }
+        }
+        users.add(user);
+        save();
+        return true;
+    }
+
+    @Override
+    public boolean deleteUser(String userLogin) {
+        for(User u : users) {
+            if(u.getLogin().equals(userLogin)){
+                if(u.getRentedVehicleId() == null) {
+                    users.remove(u);
+                    save();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
     public void load() {
         try (BufferedReader br = new BufferedReader(new FileReader("users.csv"));){
             String line;
@@ -60,7 +87,6 @@ public class UserRepository implements IUserRepository{
         }
     }
 
-    @Override
     public void save() {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter("users.csv"));){
             for(User u : users){

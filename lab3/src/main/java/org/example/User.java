@@ -1,7 +1,5 @@
 package org.example;
 
-import org.apache.commons.codec.digest.DigestUtils;
-
 public class User {
     private String login;
     private String password;
@@ -40,14 +38,14 @@ public class User {
     @Override
     public String toString(){
         String str = " has rented a vehicle:";
-        if(getRentedVehicleId() == null) { str = " hasn't rented a vehicle:"; }
+        if(getRentedVehicleId() == null) { str = " hasn't rented a vehicle."; }
         return "User: " + getLogin() + str;
     }
 
     public String toStringUserAccountDetails(){
-        String string = "have";
-        if(getRentedVehicleId() == null) { string = "haven't"; }
-        return "You " + string + " rented a vehicle which ";
+        String string = "have rented a vehicle which ";
+        if(getRentedVehicleId() == null) { string = "haven't rented a vehicle."; }
+        return "You " + string;
     }
 
     public User cloneUser(){
