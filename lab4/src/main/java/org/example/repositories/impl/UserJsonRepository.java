@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class UserJsonRepository implements org.example.repositories.UserRepository {
     private List<User> users = new ArrayList<>();
-    private final JsonFileStorage<User> storage = new JsonFileStorage<>("users.json", new TypeToken<List<Vehicle>>() {}.getType());
+    private final JsonFileStorage<User> storage = new JsonFileStorage<>("users.json", new TypeToken<List<User>>() {}.getType());
 
     public UserJsonRepository() {
         this.users = new ArrayList<>(storage.load());

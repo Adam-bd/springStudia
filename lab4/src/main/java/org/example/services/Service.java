@@ -1,12 +1,14 @@
 package org.example.services;
 
 import org.example.models.Rental;
+import org.example.models.User;
 import org.example.models.Vehicle;
 import org.example.repositories.RentalRepository;
 import org.example.repositories.VehicleRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Service {
@@ -43,6 +45,15 @@ public class Service {
     public List<Vehicle> getAvailableVehicles() {
         return vehicleRepository.findAll().stream()
                 .filter(vehicle -> rentalRepository.findByVehicleIdAndReturnDateIsNull(vehicle.getId()).isEmpty())
+                .collect(Collectors.toList());
+    }
+
+    public List<Vehicle> getRentedVehiclesByUser(String userId) {
+        return rentalRepository.findAll().stream()
+                .filter(rental -> rental.getUserId().equals(userId) && rental.isActive())
+                .map(rental -> vehicleRepository.findById(rental.getVehicleId()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 

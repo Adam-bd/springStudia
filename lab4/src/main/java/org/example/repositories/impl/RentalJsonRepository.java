@@ -13,7 +13,11 @@ import java.util.UUID;
 
 public class RentalJsonRepository implements RentalRepository {
     List<Rental> rentals = new ArrayList<>();
-    private final JsonFileStorage<Rental> storage = new JsonFileStorage<>("rentals.json", new TypeToken<List<Vehicle>>() {}.getType());
+    private final JsonFileStorage<Rental> storage = new JsonFileStorage<>("rentals.json", new TypeToken<List<Rental>>() {}.getType());
+
+    public RentalJsonRepository() {
+        this.rentals = new ArrayList<>(storage.load());
+    }
 
     @Override
     public List<Rental> findAll() {
