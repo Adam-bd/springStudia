@@ -34,15 +34,21 @@ public class RentalService {
     }
 
     public void rentVehicle(String userId, String vehicleId) {
-        if(vehicleRepository.findById(vehicleId).isPresent() && rentalRepository.findByVehicleIdAndReturnDateIsNull(vehicleId).isEmpty()) {
-            Rental rental = Rental.builder()
-                    .userId(userId)
-                    .vehicleId(vehicleId)
-                    .rentDateTime(LocalDateTime.now().toString())
-                    .build();
-            rentalRepository.save(rental);
-
+        if (vehicleRepository.findById(vehicleId).isEmpty()) {
+            throw new IllegalArgumentException("Pojazd o podanym ID nie istnieje.");
         }
+
+        if (rentalRepository.findByVehicleIdAndReturnDateIsNull(vehicleId).isPresent()) {
+            throw new IllegalStateException("Ten pojazd jest już aktualnie wypożyczony.");
+        }
+
+        Rental rental = Rental.builder()
+                .userId(userId)
+                .vehicleId(vehicleId)
+                .rentDateTime(LocalDateTime.now().toString())
+                .build();
+        rentalRepository.save(rental);
+
     }
 
 

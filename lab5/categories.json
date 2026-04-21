@@ -15,7 +15,7 @@
   {
     "category": "Bus",
     "attributes": {
-      "seats": "integer"
+      "seats": "number"
     }
   }
 ]
