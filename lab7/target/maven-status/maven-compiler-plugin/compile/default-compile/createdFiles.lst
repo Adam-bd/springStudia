@@ -1,0 +1,12 @@
+org/example/Main.class
+org/example/User.class
+org/example/IUserRepository.class
+org/example/IVehicleRepository.class
+org/example/Authentication.class
+org/example/Vehicle.class
+org/example/Role.class
+org/example/MotorcycleCategory.class
+org/example/UserRepository.class
+org/example/Motorcycle.class
+org/example/IVehicleRepositoryImpl.class
+org/example/Car.class
