@@ -6,11 +6,11 @@ import org.example.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserService {
+public class UserService implements UserServiceInterface {
     UserRepository userRepository;
-    RentalService rentalService;
+    RentalServiceInterface rentalService;
 
-    public UserService(UserRepository userRepository, RentalService rentalService) {
+    public UserService(UserRepository userRepository, RentalServiceInterface rentalService) {
         this.userRepository = userRepository;
         this.rentalService = rentalService;
     }

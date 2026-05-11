@@ -7,7 +7,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
-public class AuthService {
+public class AuthService implements AuthServiceInterface{
     private UserRepository userRepository;
 
     public AuthService(UserRepository userRepository) {

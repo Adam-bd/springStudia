@@ -27,7 +27,11 @@ public class VehicleHibernateRepository implements VehicleRepository {
 
     @Override
     public Vehicle save(Vehicle vehicle) {
-        return session.merge(vehicle);
+        Vehicle toSave = vehicle.copy();
+        if (toSave.getId() == null || toSave.getId().isBlank()) {
+            toSave.setId(generateNextAvailableId(this.session));
+        }
+        return session.merge(toSave);
     }
 
     @Override

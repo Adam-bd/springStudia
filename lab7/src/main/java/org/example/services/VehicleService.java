@@ -7,7 +7,7 @@ import org.example.repositories.VehicleRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VehicleService {
+public class VehicleService implements VehicleServiceInterface {
 
     private final VehicleValidator vehicleValidator;
     private final VehicleRepository vehicleRepository;

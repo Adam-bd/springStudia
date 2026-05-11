@@ -60,8 +60,8 @@ public class Service {
     public boolean rentVehicle(String userId, String vehicleId) {
         if(vehicleRepository.findById(vehicleId).isPresent() && rentalRepository.findByVehicleIdAndReturnDateIsNull(vehicleId).isEmpty()) {
             Rental rental = Rental.builder()
-                    .userId(userId)
-                    .vehicleId(vehicleId)
+                    .user(User.builder().id(userId).build())
+                    .vehicle(Vehicle.builder().id(vehicleId).build())
                     .rentDateTime(LocalDateTime.now().toString())
                     .build();
             rentalRepository.save(rental);

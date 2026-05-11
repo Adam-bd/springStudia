@@ -2,6 +2,7 @@ package org.example.services;
 
 import org.example.models.Rental;
 import org.example.models.User;
+import org.example.models.Vehicle;
 import org.example.repositories.RentalRepository;
 import org.example.repositories.VehicleRepository;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class RentalService {
+public class RentalService implements RentalServiceInterface{
     private final RentalRepository rentalRepository;
     private final VehicleRepository vehicleRepository;
 
@@ -33,7 +34,12 @@ public class RentalService {
         return rentals;
     }
 
-    public void rentVehicle(String userId, String vehicleId) {
+    @Override
+    public boolean userHasActiveRental(String userId) {
+        return false;
+    }
+
+    public Rental rentVehicle(String userId, String vehicleId) {
         if (vehicleRepository.findById(vehicleId).isEmpty()) {
             throw new IllegalArgumentException("Pojazd o podanym ID nie istnieje.");
         }
@@ -43,21 +49,21 @@ public class RentalService {
         }
 
         Rental rental = Rental.builder()
-                .userId(userId)
-                .vehicleId(vehicleId)
+                .user(User.builder().id(userId).build())
+                .vehicle(Vehicle.builder().id(vehicleId).build())
                 .rentDateTime(LocalDateTime.now().toString())
                 .build();
-        rentalRepository.save(rental);
+        return rentalRepository.save(rental);
 
     }
 
 
-    public void returnVehicle(String userId) {
+    public Rental returnVehicle(String userId) {
         Optional<Rental> activeRental = findActiveRentalByUserId(userId);
         if(activeRental.isPresent()) {
             Rental rental = activeRental.get();
             rental.setReturnDateTime(LocalDateTime.now().toString());
-            rentalRepository.save(rental);
+            return rentalRepository.save(rental);
         } else {
             throw new IllegalStateException("Nie masz aktualnie wypożyczonego pojazdu.");
         }

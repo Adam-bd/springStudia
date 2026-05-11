@@ -9,35 +9,65 @@ import org.example.services.*;
 
 public class Main {
     public static void main(String[] args) {
-        String mode = "json";
+        // Domyślnie ustawiamy hibernate dla wygody testowania (możesz zmienić z powrotem na json)
+        String mode = "hibernate";
         if(args.length > 0) {
             mode = args[0].toLowerCase();
         }
 
-        VehicleRepository vehicleRepository;
-        UserRepository userRepository;
-        RentalRepository rentalRepository;
+        // 1. Inicjalizacja rzeczy niezależnych od trybu (np. konfiguracja kategorii aut)
         VehicleCategoryConfigRepository categoryConfigRepository = new VehicleCategoryConfigJsonRepository();
+        VehicleCategoryConfigService categoryConfigService = new VehicleCategoryConfigService(categoryConfigRepository);
+        VehicleValidator vehicleValidator = new VehicleValidator(categoryConfigService);
 
-        if(mode.equals("jdbc")) {
+        // 2. Deklarujemy zmienne dla serwisów korzystając z INTERFEJSÓW!
+        AuthServiceInterface authService;
+        VehicleServiceInterface vehicleService;
+        RentalServiceInterface rentalService;
+        UserServiceInterface userService;
+
+        // 3. W zależności od trybu tworzymy odpowiednie Repozytoria i Serwisy
+        if(mode.equals("hibernate")) {
+            System.out.println("--- Uruchamianie w trybie HIBERNATE ---");
+
+            // Repozytoria
+            RentalHibernateRepository rentalRepo = new RentalHibernateRepository();
+            VehicleHibernateRepository vehicleRepo = new VehicleHibernateRepository();
+            UserHibernateRepository userRepo = new UserHibernateRepository();
+
+            // Serwisy
+            authService = new AuthHibernateService(userRepo);
+            rentalService = new RentalHibernateService(rentalRepo, vehicleRepo, userRepo);
+            userService = new UserHibernateService(rentalRepo, userRepo);
+            vehicleService = new VehicleHibernateService(vehicleRepo, userRepo, rentalRepo);
+
+        } else if(mode.equals("jdbc")) {
             System.out.println("--- Uruchamianie w trybie BAZY DANYCH (JDBC) ---");
-            vehicleRepository = new VehicleJdbcRepository();
-            userRepository = new UserJdbcRepository();
-            rentalRepository = new RentalJdbcRepository();
+
+            VehicleRepository vehicleRepo = new VehicleJdbcRepository();
+            UserRepository userRepo = new UserJdbcRepository();
+            RentalRepository rentalRepo = new RentalJdbcRepository();
+
+            authService = new AuthService(userRepo);
+            rentalService = new RentalService(rentalRepo, vehicleRepo);
+            userService = new UserService(userRepo, rentalService);
+            vehicleService = new VehicleService(vehicleRepo, rentalRepo, vehicleValidator);
+
         } else {
             System.out.println("--- Uruchamianie w trybie PLIKÓW (JSON) ---");
-            vehicleRepository = new VehicleJsonRepository();
-            userRepository = new UserJsonRepository();
-            rentalRepository = new RentalJsonRepository();
+
+            VehicleRepository vehicleRepo = new VehicleJsonRepository();
+            UserRepository userRepo = new UserJsonRepository();
+            RentalRepository rentalRepo = new RentalJsonRepository();
+
+            authService = new AuthService(userRepo);
+            rentalService = new RentalService(rentalRepo, vehicleRepo);
+            userService = new UserService(userRepo, rentalService);
+            vehicleService = new VehicleService(vehicleRepo, rentalRepo, vehicleValidator);
         }
 
-        VehicleCategoryConfigService categoryConfigService = new VehicleCategoryConfigService(categoryConfigRepository);
-        AuthService authService = new AuthService(userRepository);
-        VehicleValidator vehicleValidator = new VehicleValidator(categoryConfigService);
-        VehicleService vehicleService = new VehicleService(vehicleRepository, rentalRepository, vehicleValidator);
-        RentalService rentalService = new RentalService(rentalRepository, vehicleRepository);
-        UserService userService = new UserService(userRepository, rentalService);
-
+        // 4. Uruchamiamy interfejs użytkownika
+        // UI przyjmuje interfejsy, więc nie obchodzi go, co zrobiliśmy w instrukcji if wyżej!
         UI ui = new UI(
                 authService,
                 vehicleService,

@@ -2,6 +2,8 @@ package org.example.repositories.impl;
 
 import org.example.JdbcConnectionManager;
 import org.example.models.Rental;
+import org.example.models.User;
+import org.example.models.Vehicle;
 import org.example.repositories.RentalRepository;
 
 import java.sql.Connection;
@@ -23,8 +25,8 @@ public class RentalJdbcRepository implements RentalRepository {
             while (rs.next()) {
                 Rental rental = Rental.builder()
                         .id(rs.getString("id"))
-                        .vehicleId(rs.getString("vehicle_id"))
-                        .userId(rs.getString("user_id"))
+                        .user(User.builder().id(rs.getString("user_id")).build())
+                        .vehicle(Vehicle.builder().id(rs.getString("vehicle_id")).build())
                         .rentDateTime(rs.getString("rent_date"))
                         .returnDateTime(rs.getString("return_date"))
                         .build();
@@ -50,8 +52,8 @@ public class RentalJdbcRepository implements RentalRepository {
                 if(rs.next()) {
                     Rental rental = Rental.builder()
                             .id(rs.getString("id"))
-                            .vehicleId(rs.getString("vehicle_id"))
-                            .userId(rs.getString("user_id"))
+                            .vehicle(Vehicle.builder().id(rs.getString("vehicle_id")).build())
+                            .user(User.builder().id(rs.getString("user_id")).build())
                             .rentDateTime(rs.getString("rent_date"))
                             .returnDateTime(rs.getString("return_date"))
                             .build();
@@ -128,8 +130,8 @@ public class RentalJdbcRepository implements RentalRepository {
                 if(rs.next()) {
                     Rental rental = Rental.builder()
                             .id(rs.getString("id"))
-                            .vehicleId(rs.getString("vehicle_id"))
-                            .userId(rs.getString("user_id"))
+                            .user(User.builder().id(rs.getString("user_id")).build())
+                            .vehicle(Vehicle.builder().id(rs.getString("vehicle_id")).build())
                             .rentDateTime(rs.getString("rent_date"))
                             .returnDateTime(rs.getString("return_date"))
                             .build();
