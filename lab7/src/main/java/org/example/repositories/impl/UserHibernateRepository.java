@@ -33,7 +33,11 @@ public class UserHibernateRepository implements UserRepository {
 
     @Override
     public User save(User user) {
-        return session.merge(user);
+        User toSave = user.copy();
+        if (toSave.getId() == null || toSave.getId().isBlank()) {
+            toSave.setId(java.util.UUID.randomUUID().toString()); // Automatyczne generowanie ID
+        }
+        return session.merge(toSave);
     }
 
     @Override

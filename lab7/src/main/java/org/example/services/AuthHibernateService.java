@@ -39,7 +39,11 @@ public class AuthHibernateService implements AuthServiceInterface {
             tx.commit();
             return true;
         } catch (Exception e) {
-            rollback(tx);
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // ignore
+            }
             return false;
         }
     }

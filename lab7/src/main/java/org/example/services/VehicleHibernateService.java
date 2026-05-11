@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.HibernateConfig;
+import org.example.models.Rental;
 import org.example.models.Vehicle;
 import org.example.repositories.impl.RentalHibernateRepository;
 import org.example.repositories.impl.UserHibernateRepository;
@@ -58,8 +59,12 @@ public class VehicleHibernateService implements VehicleServiceInterface {
             tx.commit();
             return savedVehicle;
         } catch (Exception e) {
-            rollback(tx);
-            throw e;
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // Ignorujemy błąd zamkniętego połączenia przy rollbacku
+            }
+            throw new RuntimeException("Error occurred while adding vehicle", e);
         }
     }
 
@@ -69,11 +74,31 @@ public class VehicleHibernateService implements VehicleServiceInterface {
         try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             tx = session.beginTransaction();
             setSession(session);
-            vehicleRepo.deleteById(vehicleId);
+            Vehicle vehicle = vehicleRepo.findById(vehicleId)
+                    .orElseThrow(() -> new IllegalArgumentException("Cannot find vehicle with provided id."));
+
+            boolean isRented = session.createQuery(
+                            "FROM Rental r WHERE r.vehicle.id = :vId AND r.returnDateTime IS NULL", Rental.class)
+                    .setParameter("vId", vehicle)
+                    .setMaxResults(1)
+                    .uniqueResultOptional()
+                    .isPresent();
+
+            if (isRented) {
+                throw new IllegalStateException("Cannot delete vehicle while it is rented!");
+            }
+
+            // 3. Jeśli nie jest wypożyczony, bezpiecznie usuwamy
+            vehicleRepo.deleteById(vehicle.getId());
+
             tx.commit();
         } catch (Exception e) {
-            rollback(tx);
-            throw e;
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // ignore
+            }
+            throw new RuntimeException("Error occurred while deleting vehicle", e);
         }
     }
 

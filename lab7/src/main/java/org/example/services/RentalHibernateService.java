@@ -67,8 +67,12 @@ public class RentalHibernateService implements RentalServiceInterface {
             return savedRental;
 
         } catch (Exception e) {
-            rollback(tx);
-            throw e;
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // ignore
+            }
+            throw new RuntimeException("Error occurred while renting vehicle", e);
         }
     }
 
@@ -92,8 +96,12 @@ public class RentalHibernateService implements RentalServiceInterface {
             return savedRental;
 
         } catch (Exception e) {
-            rollback(tx);
-            throw e;
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // ignore
+            }
+            throw new RuntimeException("Error occurred while returning vehicle", e);
         }
     }
 

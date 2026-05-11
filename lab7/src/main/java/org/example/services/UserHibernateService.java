@@ -58,8 +58,12 @@ public class UserHibernateService implements UserServiceInterface{
             userRepo.deleteById(user.getId());
             tx.commit();
         } catch (Exception e) {
-            rollback(tx);
-            throw e;
+            try {
+                rollback(tx);
+            } catch (Exception ex) {
+                // ignore
+            }
+            throw new RuntimeException("Error occurred while deleting user", e);
         }
     }
 
