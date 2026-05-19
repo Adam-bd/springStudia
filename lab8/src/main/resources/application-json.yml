@@ -1,0 +1,13 @@
+carrent:
+  json:
+    users-file: users.json
+    vehicles-file: vehicles.json
+    rentals-file: rentals.json
+    categories-file: categories.json
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration

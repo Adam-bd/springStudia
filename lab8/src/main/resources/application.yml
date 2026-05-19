@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: ${APP_PROFILE:json}
+  main:
+    banner-mode: "off"
+
+server:
+  port: 8080
+
+
